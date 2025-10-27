@@ -4,8 +4,6 @@ import os
 STORAGE_PATH = "storage.json"
 
 def save_ticket_context(ticket_id: str, conversation_reference: dict, activity_id: str):
-    if not os.path.exists("shared"):
-        os.makedirs("shared")
     data = {}
     if os.path.exists(STORAGE_PATH):
         with open(STORAGE_PATH, "r") as f:
