@@ -12,7 +12,7 @@ def save_ticket_context(ticket_id: str, conversation_reference: dict, activity_i
             except json.JSONDecodeError:
                 data = {}
     data[ticket_id] = {
-        "conversation_reference": conversation_reference,
+        "conversation_reference": conversation_reference.serialize(),
         "activity_id": activity_id
     }
     with open(STORAGE_PATH, "w") as f:
