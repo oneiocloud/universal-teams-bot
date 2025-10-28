@@ -56,7 +56,7 @@ async def send_card(req: web.Request) -> web.Response:
             return web.Response(status=400, text=str(e))
 
         # Load conversation reference and activity ID from storage
-        ticket_context = await get_ticket_context(ticket_id)
+        ticket_context = get_ticket_context(ticket_id)
         if not ticket_context:
             return web.Response(status=404, text=f"Ticket context for ticket {ticket_id} not found")
 
