@@ -14,6 +14,20 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("universal_bot")
 
 class UniversalBot(ActivityHandler):
+    async def on_turn(self, turn_context: TurnContext):
+        activity_type = turn_context.activity.type
+        logger.info(f"Entered on_turn with activity type: {activity_type}")
+
+        if activity_type == "message":
+            await self.on_message_activity(turn_context)
+
+        elif activity_type == "invoke":
+            logger.info("Received invoke activity; routing to on_teams_card_action_invoke")
+            return await self.on_teams_card_action_invoke(turn_context)
+
+        else:
+            logger.warning(f"Unsupported activity type: {activity_type}")
+
     async def on_message_activity(self, turn_context: TurnContext):
         logger.info("Entered on_message_activity")
         text = turn_context.activity.text.strip().lower()
