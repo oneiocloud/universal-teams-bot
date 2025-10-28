@@ -109,12 +109,25 @@ class UniversalBot(ActivityHandler):
         }
         logger.info(f"Sending payload to ONEiO: {payload}")
         try:
+            # send payload to ONEiO (synchronous)
             self.send_to_oneio(payload)
         except Exception as e:
             logger.error(f"Failed to send to ONEiO: {e}")
-            await turn_context.send_activity("An error occurred while processing your request.")
-            return InvokeResponse(status=500)
-        return InvokeResponse(status=200)
+            # Inform the user in Teams and return a 500 InvokeResponse with an error body
+            try:
+                await turn_context.send_activity("An error occurred while processing your request.")
+            except Exception as send_err:
+                logger.warning(f"Failed to send error message to user: {send_err}")
+            return InvokeResponse(status=500, body={"error": str(e)})
+
+        # Send a short confirmation message to the user so Teams UI shows immediate feedback
+        try:
+            await turn_context.send_activity("✅ Your action was received and forwarded to ONEiO.")
+        except Exception as send_err:
+            logger.warning(f"Failed to send confirmation message to user: {send_err}")
+
+        # Return a proper InvokeResponse with a small body so Teams doesn't report "Unable to reach app"
+        return InvokeResponse(status=200, body={"status": "accepted"})
 
     def send_to_oneio(self, payload):
         # Read credentials and endpoint from environment variables
