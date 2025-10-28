@@ -36,7 +36,7 @@ async def messages(req: web.Request) -> web.Response:
             logger.info(f"Adapter returned response with status: {response.status}")
             return web.json_response(response.body, status=response.status)
         else:
-            logger.info("Adapter returned no response object; returning HTTP 200")
+            logger.info("Adapter returned no response object or non-invoke response; returning HTTP 200")
             return web.Response(status=200)
     except Exception as e:
         logger.exception("Error handling activity")

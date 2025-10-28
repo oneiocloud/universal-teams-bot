@@ -121,7 +121,10 @@ class UniversalBot(ActivityHandler):
             return InvokeResponse(status=500, body={"error": str(e)})
 
         # Return a proper InvokeResponse with a small body so Teams doesn't report "Unable to reach app"
-        return InvokeResponse(status=200, body={"status": "accepted"})
+        return InvokeResponse(
+            status=200,
+            body={"type": "application/vnd.microsoft.activity.message", "text": ""}
+        )
 
     def send_to_oneio(self, payload):
         # Read credentials and endpoint from environment variables
