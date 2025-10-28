@@ -7,7 +7,7 @@ from botbuilder.core import (
     BotFrameworkAdapter,
     TurnContext,
 )
-from botbuilder.schema import Activity, ConversationReference
+from botbuilder.schema import Activity, ConversationReference, InvokeResponse
 from universal_bot import UniversalBot
 from storage_utils import get_ticket_context
 from card_validator import validate_card  
@@ -32,9 +32,9 @@ async def messages(req: web.Request) -> web.Response:
         auth_header = req.headers.get("Authorization", "")
         logger.info("Processing activity through adapter...")
         response = await ADAPTER.process_activity(activity, auth_header, BOT.on_turn)
-        if response:
+        if isinstance(response, InvokeResponse):
             logger.info(f"Adapter returned response with status: {response.status}")
-            return web.Response(status=response.status)
+            return web.json_response(response.body, status=response.status)
         else:
             logger.info("Adapter returned no response object; returning HTTP 200")
             return web.Response(status=200)
