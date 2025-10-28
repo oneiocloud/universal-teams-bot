@@ -62,7 +62,10 @@ class UniversalBot(ActivityHandler):
                 "ticket_id": ticket_id
             }
             logger.info(f"Sending payload to ONEiO: {payload}")
-            self.send_to_oneio(payload)
+            try:
+                self.send_to_oneio(payload)
+            except Exception as e:
+                logger.error(f"Failed to send to ONEiO: {e}")
         else:
             await turn_context.send_activity("say 'create ticket' to start something")
 
@@ -76,6 +79,10 @@ class UniversalBot(ActivityHandler):
             verb = action_value
         datafields = activity.value.get("data") or activity.value.get("inputs") or {}
         ticket_id = get_ticket_id_by_activity(activity.reply_to_id or activity.id)
+        if not ticket_id:
+            logger.error("No ticket_id could be found for this activity.")
+            await turn_context.send_activity("Could not determine the ticket ID.")
+            return InvokeResponse(status=400)
         logger.info(f"Extracted verb: {verb}")
         logger.info(f"Extracted ticket_id: {ticket_id}")
         logger.info(f"Extracted datafields: {datafields}")
@@ -87,7 +94,12 @@ class UniversalBot(ActivityHandler):
             "timestamp": datetime.datetime.utcnow().isoformat() + "Z"
         }
         logger.info(f"Sending payload to ONEiO: {payload}")
-        self.send_to_oneio(payload)
+        try:
+            self.send_to_oneio(payload)
+        except Exception as e:
+            logger.error(f"Failed to send to ONEiO: {e}")
+            await turn_context.send_activity("An error occurred while processing your request.")
+            return InvokeResponse(status=500)
         return InvokeResponse(status=200)
 
     def send_to_oneio(self, payload):

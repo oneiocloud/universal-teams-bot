@@ -28,11 +28,15 @@ logging.basicConfig(level=logging.INFO)
 async def messages(req: web.Request) -> web.Response:
     try:
         activity = await ADAPTER.parse_request(req)
+        logger.info(f"Incoming activity: type={getattr(activity, 'type', None)} id={getattr(activity, 'id', None)} from={getattr(activity, 'from_property', None)}")
         auth_header = req.headers.get("Authorization", "")
+        logger.info("Processing activity through adapter...")
         response = await ADAPTER.process_activity(activity, auth_header, BOT.on_turn)
         if response:
+            logger.info(f"Adapter returned response with status: {response.status}")
             return web.Response(status=response.status)
         else:
+            logger.info("Adapter returned no response object; returning HTTP 200")
             return web.Response(status=200)
     except Exception as e:
         logger.exception("Error handling activity")
@@ -43,8 +47,10 @@ async def send_card(req: web.Request) -> web.Response:
     try:
         payload = await req.json()
         logger.info("/api/send_card endpoint triggered")
+        logger.info(f"Received /api/send_card payload: {payload}")
         ticket_id = payload.get("ticket_id")
         card = payload.get("card")
+        logger.info(f"ticket_id={ticket_id}, card_present={bool(card)}")
 
         # Validate ticket_id and card existence
         if not ticket_id or not card:
@@ -52,11 +58,13 @@ async def send_card(req: web.Request) -> web.Response:
 
         try:
             validate_card(card)
+            logger.info("Adaptive Card validated successfully")
         except ValueError as e:
             return web.Response(status=400, text=str(e))
 
         # Load conversation reference and activity ID from storage
         ticket_context = get_ticket_context(ticket_id)
+        logger.info(f"Loaded ticket_context for {ticket_id}: {ticket_context}")
         if not ticket_context:
             return web.Response(status=404, text=f"Ticket context for ticket {ticket_id} not found")
 
@@ -72,8 +80,11 @@ async def send_card(req: web.Request) -> web.Response:
                 id=activity_id,
                 attachments=[card]
             )
+            logger.info(f"Updating activity id={updated_activity.id} with new card attachment")
             await turn_context.update_activity(updated_activity)
+            logger.info("update_activity completed")
 
+        logger.info(f"About to continue conversation for ticket {ticket_id} using activity_id={activity_id}")
         # Continue the conversation and update the card
         await ADAPTER.continue_conversation(conversation_reference, continue_callback, os.environ.get("MicrosoftAppId", ""))
 
