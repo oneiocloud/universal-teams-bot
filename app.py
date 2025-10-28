@@ -76,10 +76,17 @@ async def send_card(req: web.Request) -> web.Response:
 
         # Define the callback to update the activity
         async def continue_callback(turn_context: TurnContext):
+            from botbuilder.schema import Attachment
+
             updated_activity = Activity(
                 type="message",
                 id=activity_id,
-                attachments=[card]
+                attachments=[
+                    Attachment(
+                        content_type="application/vnd.microsoft.card.adaptive",
+                        content=card
+                    )
+                ]
             )
             logger.info(f"Updating activity id={updated_activity.id} with new card attachment")
             await turn_context.update_activity(updated_activity)
