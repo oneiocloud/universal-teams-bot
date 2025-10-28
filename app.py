@@ -86,3 +86,8 @@ app.router.add_post("/api/send_card", send_card)
 
 # Azure entry point
 def main(req): return app
+
+if __name__ == "__main__":
+    port = int(os.getenv("PORT", 8000))
+    logger.info("🚀 Bot running with manual startup")
+    web.run_app(app, host="0.0.0.0", port=port)
