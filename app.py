@@ -43,12 +43,12 @@ async def send_card(req: web.Request) -> web.Response:
     try:
         payload = await req.json()
         logger.info("/api/send_card endpoint triggered")
-        ticket_id = payload.get("ticketId")
+        ticket_id = payload.get("ticket_id")
         card = payload.get("card")
 
         # Validate ticket_id and card existence
         if not ticket_id or not card:
-            return web.Response(status=400, text="Missing ticketId or card")
+            return web.Response(status=400, text="Missing ticket_id or card")
 
         try:
             validate_card(card)
