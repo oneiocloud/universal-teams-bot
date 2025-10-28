@@ -1,5 +1,6 @@
 # app.py
 from aiohttp import web
+import logging
 import os
 from botbuilder.core import (
     BotFrameworkAdapterSettings,
@@ -19,6 +20,10 @@ SETTINGS = BotFrameworkAdapterSettings(
 ADAPTER = BotFrameworkAdapter(SETTINGS)
 BOT = UniversalBot()
 
+logger = logging.getLogger("teamsbot")
+logging.basicConfig(level=logging.INFO)
+
+
 # Main bot endpoint (for Teams)
 async def messages(req: web.Request) -> web.Response:
     try:
@@ -27,14 +32,14 @@ async def messages(req: web.Request) -> web.Response:
         response = await ADAPTER.process_activity(activity, auth_header, BOT.on_turn)
         return web.Response(status=response.status)
     except Exception as e:
-        print(f"❌ Exception: {e}")
+        logger.exception("Error handling activity")
         return web.Response(status=500, text="Error handling activity")
 
 # New ONEiO entry point
 async def send_card(req: web.Request) -> web.Response:
     try:
         payload = await req.json()
-        print("✅ /api/send_card endpoint triggered")
+        logger.info("/api/send_card endpoint triggered")
         ticket_id = payload.get("ticketId")
         card = payload.get("card")
 
@@ -71,7 +76,7 @@ async def send_card(req: web.Request) -> web.Response:
 
         return web.Response(status=200, text="Card updated")
     except Exception as e:
-        print(f"❌ Exception: {e}")
+        logger.exception("Error processing send_card")
         return web.Response(status=500, text="Error processing send_card")
 
 # Set up app + routes
