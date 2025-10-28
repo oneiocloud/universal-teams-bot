@@ -30,7 +30,10 @@ async def messages(req: web.Request) -> web.Response:
         activity = await ADAPTER.parse_request(req)
         auth_header = req.headers.get("Authorization", "")
         response = await ADAPTER.process_activity(activity, auth_header, BOT.on_turn)
-        return web.Response(status=response.status)
+        if response:
+            return web.Response(status=response.status)
+        else:
+            return web.Response(status=200)
     except Exception as e:
         logger.exception("Error handling activity")
         return web.Response(status=500, text="Error handling activity")
