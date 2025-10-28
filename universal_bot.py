@@ -20,7 +20,7 @@ class UniversalBot(ActivityHandler):
         logger.info(f"Received message: {text}")
         if text == "create ticket":
             # Generate unique ticket ID using current UTC timestamp in milliseconds
-            ticket_id = str(int(datetime.datetime.utcnow().timestamp() * 1000))
+            ticket_id = generate_ticket_id()
             
             # Construct a basic "loading" adaptive card with the ticket ID visible
             card_content = {
@@ -106,3 +106,8 @@ class UniversalBot(ActivityHandler):
         )
         logger.info(f"Received response status code: {response.status_code}")
         response.raise_for_status()
+
+
+
+def generate_ticket_id():
+    return str(int(datetime.datetime.utcnow().timestamp() * 1000))
