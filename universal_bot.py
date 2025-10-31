@@ -114,7 +114,7 @@ class UniversalBot(ActivityHandler):
 
 
 
-def send_to_oneio(self, payload):
+def send_to_oneio(payload):
     # Read credentials and endpoint from environment variables
     username = os.environ.get("ONEIO_USERNAME")
     password = os.environ.get("ONEIO_PASSWORD")
