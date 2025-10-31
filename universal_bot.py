@@ -28,6 +28,7 @@ class UniversalBot(ActivityHandler):
         else:
             logger.warning(f"Unsupported activity type: {activity_type}")
 
+
     async def on_message_activity(self, turn_context: TurnContext):
         logger.info("Entered on_message_activity")
         text = turn_context.activity.text.strip().lower()
@@ -83,6 +84,7 @@ class UniversalBot(ActivityHandler):
         else:
             await turn_context.send_activity("say 'create ticket' to start something")
 
+
     async def on_teams_card_action_invoke(self, turn_context: TurnContext):
         logger.info("Entered on_teams_card_action_invoke")
         activity = turn_context.activity
@@ -125,6 +127,7 @@ class UniversalBot(ActivityHandler):
             status=200,
             body={"type": "application/vnd.microsoft.activity.message", "text": ""}
         )
+
 
     def send_to_oneio(self, payload):
         # Read credentials and endpoint from environment variables

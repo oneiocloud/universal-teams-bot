@@ -54,25 +54,25 @@ async def send_card(req: web.Request) -> web.Response:
 
         # Validate ticket_id and card existence
         if not ticket_id or not card:
-            return web.Response(status=400, text="Missing ticket_id or card")
+            return web.json_response({"error": "Missing ticket_id or card"}, status=400)
 
         try:
             validate_card(card)
             logger.info("Adaptive Card validated successfully")
         except ValueError as e:
-            return web.Response(status=400, text=str(e))
+            return web.json_response({"error": str(e)}, status=400)
 
         # Load conversation reference and activity ID from storage
         ticket_context = get_ticket_context(ticket_id)
         logger.info(f"Loaded ticket_context for {ticket_id}: {ticket_context}")
         if not ticket_context:
-            return web.Response(status=404, text=f"Ticket context for ticket {ticket_id} not found")
+            return web.json_response({"error": f"Ticket context for ticket {ticket_id} not found"}, status=404)
 
         from botbuilder.schema import ConversationReference
         conversation_reference = ConversationReference().deserialize(ticket_context.get("conversation_reference"))
         activity_id = ticket_context.get("activity_id")
         if not conversation_reference or not activity_id:
-            return web.Response(status=404, text=f"Conversation reference or activity ID for ticket {ticket_id} missing")
+            return web.json_response({"error": f"Conversation reference or activity ID for ticket {ticket_id} missing"}, status=404)
 
         # Define the callback to update the activity
         async def continue_callback(turn_context: TurnContext):
@@ -96,10 +96,10 @@ async def send_card(req: web.Request) -> web.Response:
         # Continue the conversation and update the card
         await ADAPTER.continue_conversation(conversation_reference, continue_callback, os.environ.get("MicrosoftAppId", ""))
 
-        return web.Response(status=200, text="Card updated")
+        return web.json_response({"message": "Card updated"}, status=200)
     except Exception as e:
         logger.exception("Error processing send_card")
-        return web.Response(status=500, text="Error processing send_card")
+        return web.json_response({"error": "Error processing send_card"}, status=500)
 
 # Set up app + routes
 app = web.Application()
