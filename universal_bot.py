@@ -75,12 +75,14 @@ class UniversalBot(ActivityHandler):
         activity = turn_context.activity
 
         if activity.type == "invoke":                                                       # Handle Action.Execute
-            action_value = activity.value.get("action", {})
+            action_value = activity.value.get("action", {}) or {}
             verb = action_value.get("verb") or action_value.get("action")
-            datafields = activity.value.get("data") or activity.value.get("inputs") or {}
+            static_data = activity.value.get("data", {}) or {}
+            inputs = activity.value.get("inputs", {}) or {}
+            datafields = {**static_data, **inputs}
         else:                                                                               # Handle Action.Submit
             verb = activity.value.get("verb")
-            datafields = activity.value
+            datafields = activity.value or {}
 
         ticket_id = get_ticket_id_by_activity(activity.reply_to_id or activity.id)
         if not ticket_id:
