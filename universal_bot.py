@@ -42,11 +42,80 @@ class UniversalBot(ActivityHandler):
         ticket_id = generate_ticket_id()
         card_content = {
             "type": "AdaptiveCard",
+            "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+            "version": "1.6",
             "body": [
-                {"type": "TextBlock", "text": "Loading...", "weight": "Bolder", "size": "Medium"},
-                {"type": "TextBlock", "text": f"Ticket ID: {ticket_id}", "wrap": True}
-            ],
-            "version": "1.0"
+                {
+                    "type": "ColumnSet",
+                    "columns": [
+                        {
+                            "type": "Column",
+                            "width": "auto",
+                            "items": [
+                                {
+                                    "type": "Image",
+                                    "url": "https://cdn.prod.website-files.com/615862cf7e67455a772dfa12/674f00941f14b7062960bb98_ONEiO_Wordmark-comp_Accent_black-bluedot-small.png",
+                                    "width": "50px",
+                                    "height": "50px"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "Column",
+                            "width": "stretch",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": "ONEiO Teams Bot",
+                                    "weight": "Bolder",
+                                    "size": "Medium",
+                                    "horizontalAlignment": "Center",
+                                    "wrap": True
+                                },
+                                {
+                                    "type": "TextBlock",
+                                    "text": "Creating your ticket...",
+                                    "horizontalAlignment": "Center",
+                                    "spacing": "None",
+                                    "isSubtle": True,
+                                    "wrap": True
+                                }
+                            ],
+                            "verticalContentAlignment": "Center"
+                        }
+                    ]
+                },
+                {
+                    "type": "TextBlock",
+                    "text": "Please wait while we prepare your form.",
+                    "horizontalAlignment": "Center",
+                    "wrap": True,
+                    "spacing": "Medium"
+                },
+                {
+                    "type": "TextBlock",
+                    "text": "Loading...",
+                    "weight": "Bolder",
+                    "size": "Large",
+                    "horizontalAlignment": "Center",
+                    "spacing": "Medium"
+                },
+                {
+                    "type": "Image",
+                    "url": "https://usagif.com/wp-content/uploads/loading-96.gif",
+                    "horizontalAlignment": "Center",
+                    "size": "Small",
+                    "spacing": "Small"
+                },
+                {
+                    "type": "TextBlock",
+                    "text": f"Ticket ID: {ticket_id}",
+                    "isSubtle": True,
+                    "spacing": "Small",
+                    "horizontalAlignment": "Center",
+                    "wrap": True
+                }
+            ]
         }
         card_attachment = Attachment(
             content_type="application/vnd.microsoft.card.adaptive",
