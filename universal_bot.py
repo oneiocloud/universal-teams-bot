@@ -189,7 +189,22 @@ class UniversalBot(ActivityHandler):
             content_type="application/vnd.microsoft.card.adaptive",
             content=card_content
         )
-        sent_activity = await turn_context.send_activity(Activity(attachments=[card_attachment]))
+        if turn_context.activity.reply_to_id:
+            sent_activity = await turn_context.update_activity(
+                Activity(
+                    id=turn_context.activity.reply_to_id,
+                    type="message",
+                    attachments=[card_attachment],
+                    conversation=turn_context.activity.conversation
+                )
+            )
+        else:
+            sent_activity = await turn_context.send_activity(
+                Activity(
+                    type="message",
+                    attachments=[card_attachment]
+                )
+            )
         logger.info("Displayed loading card in chat")
         return sent_activity.id
 
