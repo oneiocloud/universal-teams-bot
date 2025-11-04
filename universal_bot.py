@@ -104,7 +104,7 @@ class UniversalBot(ActivityHandler):
             return InvokeResponse(status=500, body={"error": str(e)})
 
         if activity.type == "invoke":
-            return InvokeResponse(status=200, body={"type": "application/vnd.microsoft.activity.message", "text": ""})
+            return InvokeResponse(status=200, body={})
 
     
     async def _send_loading_card(self, turn_context: TurnContext, ticket_id: str, description_text: str):
