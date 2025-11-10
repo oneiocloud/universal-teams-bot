@@ -14,27 +14,22 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("universal_bot")
 
 class UniversalBot(ActivityHandler):
-    async def on_turn(self, turn_context: TurnContext):
-        activity_type = turn_context.activity.type
-        logger.info(f"Entered on_turn with activity type: {activity_type}")
-
-        if (activity_type == "message" and turn_context.activity.value) or (                        # Handle Action.Submit
-            activity_type == "invoke" and turn_context.activity.name == "adaptiveCard/action"):     # Handle Action.Execute
+    async def on_message_activity(self, turn_context: TurnContext):
+        if turn_context.activity.value:
             return await self._handle_card_action(turn_context)
 
-        elif activity_type == "message":
-            text = turn_context.activity.text.strip().lower()
-            if text == "create ticket":
-                return await self._handle_create_ticket(turn_context)
-            else:
-                return await self._handle_invalid_message(turn_context)
-
-        elif activity_type == "invoke":
-            logger.warning(f"Invoke activity not handled: {turn_context.activity.name}")
-            return InvokeResponse(status=501)
-
+        text = turn_context.activity.text.strip().lower()
+        if text == "create ticket":
+            return await self._handle_create_ticket(turn_context)
         else:
-            logger.warning(f"Unsupported activity type: {activity_type}")
+            return await self._handle_invalid_message(turn_context)
+
+    async def on_invoke_activity(self, turn_context: TurnContext) -> InvokeResponse:
+        if turn_context.activity.name == "adaptiveCard/action":
+            return await self._handle_card_action(turn_context)
+        else:
+            logger.warning(f"Unknown invoke activity: {turn_context.activity.name}")
+            return InvokeResponse(status=501)
 
 
     async def _handle_create_ticket(self, turn_context: TurnContext):
