@@ -58,6 +58,8 @@ class UniversalBot(ActivityHandler):
 
 
     async def _handle_card_action(self, turn_context: TurnContext):
+        logger.info(f"Raw incoming activity value: {turn_context.activity.value}")
+        logger.info(f"Full incoming activity object: {turn_context.activity}")
         logger.info("Handling card action (submit or execute)")
         activity = turn_context.activity
 
@@ -103,7 +105,8 @@ class UniversalBot(ActivityHandler):
                 logger.warning(f"Failed to send error message to user: {send_err}")
             return InvokeResponse(status=500, body={"error": str(e)})
 
-        return InvokeResponse(status=200, body={})
+        logger.info("Returning InvokeResponse with status 200 for Teams")
+        return InvokeResponse(status=200, body={"Successful"})
 
     
     async def _send_loading_card(self, turn_context: TurnContext, ticket_id: str, description_text: str):
