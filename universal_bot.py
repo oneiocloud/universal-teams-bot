@@ -101,7 +101,7 @@ class UniversalBot(ActivityHandler):
             return InvokeResponse(status=500, body={"error": str(e)})
 
         logger.info("Returning InvokeResponse with status 200 for Teams")
-        return InvokeResponse(status=200, body={"Successful"})
+        return InvokeResponse(status=200, body={"message": "Successful"})
 
     
     async def _send_loading_card(self, turn_context: TurnContext, ticket_id: str, description_text: str):
