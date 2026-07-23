@@ -14,8 +14,9 @@ from card_validator import validate_card
 
 # Adapter config
 SETTINGS = BotFrameworkAdapterSettings(
-    os.environ.get("MicrosoftAppId", ""),
-    os.environ.get("MicrosoftAppPassword", "")
+    app_id=os.environ.get("MicrosoftAppId", ""),
+    app_password=os.environ.get("MicrosoftAppPassword", ""),
+    channel_auth_tenant=os.environ.get("MicrosoftAppTenantId", ""),
 )
 ADAPTER = BotFrameworkAdapter(SETTINGS)
 BOT = UniversalBot()
