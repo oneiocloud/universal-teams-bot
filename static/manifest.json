@@ -1,0 +1,32 @@
+{
+  "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.22/MicrosoftTeams.schema.json",
+  "manifestVersion": "1.22",
+  "version": "1.0.0",
+  "id": "<MICROSOFT_APP_ID>",
+  "packageName": "com.oneio.teams.bot",
+  "developer": {
+    "name": "ONEiO cloud oy",
+    "websiteUrl": "https://www.oneio.cloud",
+    "privacyUrl": "https://www.oneio.cloud/privacy",
+    "termsOfUseUrl": "https://www.oneio.cloud/terms"
+  },
+  "name": { "short": "ONEiO Bot", "full": "ONEiO Teams Bot" },
+  "description": {
+    "short": "Create and update tickets via Teams.",
+    "full": "The ONEiO Teams Bot lets your teams create, view, and update tickets directly in Microsoft Teams, syncing with ONEiO."
+  },
+  "icons": { "color": "color.png", "outline": "outline.png" },
+  "accentColor": "#6264A7",
+  "bots": [
+    {
+      "botId": "<MICROSOFT_APP_ID>",
+      "scopes": ["personal", "team", "groupchat"],
+      "supportsFiles": false,
+      "isNotificationOnly": false
+    }
+  ],
+  "permissions": ["identity", "messageTeamMembers"],
+  "validDomains": [
+    "<MICROSOFT_APP_DOMAIN>"
+  ]
+}
